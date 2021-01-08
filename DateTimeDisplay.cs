@@ -1,13 +1,13 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DateTimeDisplay : MonoBehaviour
 {
+	public double speed = 1;
 	private Text txt;
-	private GameObject earth;
-	private double speed, s;
+	private double s;
 	private bool isLeapYear;
 	private int year = 2020;
 	private int days;
@@ -19,7 +19,6 @@ public class DateTimeDisplay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        earth = GameObject.Find("Earth");
 		txt = GetComponent<Text>();
 		
 		//s represents number of seconds since Jan 1 of the current year
@@ -29,10 +28,8 @@ public class DateTimeDisplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        EarthBehavior earthObj = earth.GetComponent("EarthBehavior") as EarthBehavior;
-		speed = earthObj.speed;
 		
-		//determine if is leap year based on year number
+		//determine if it's a leap year based on year number
 		if (year % 4 != 0 || (year % 100 == 0 && year % 400 != 0))
 			isLeapYear = false;
 		else
@@ -41,7 +38,7 @@ public class DateTimeDisplay : MonoBehaviour
 		//days initially represents day # of the current year
 		days = (int)(s / 86400) + 1;
 		
-		//determine the month based on days, and then determine the day # of the current month
+		//determine the month based on days and then determine the day # of the current month
 		for (int i=0; i<months.Count; i++) {
 			if (!isLeapYear && days <= maxDays[i]) {
 				month = months[i];
