@@ -1,14 +1,14 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
 
 public class EarthBehavior : MonoBehaviour
 {
-	public double speed = 1;
+	private double speed;
 	private float scaleFactor;
 	private Vector3 pos, camPos, sunPos, camDist, sunDist, iniScale, norm;
-	private GameObject cam, sun;
+	private GameObject cam, sun, date;
 	private Material mat;
 	private const double tRev = 31556925.445; //number of seconds in a tropical year aka 365.24219 days
 	private const double rotPerSec = .00417807; //number of degrees of rotation about Earth's axis per second 
@@ -21,6 +21,7 @@ public class EarthBehavior : MonoBehaviour
 		mat = GetComponent<Renderer>().material;
 		sun = GameObject.Find("Sun");
         cam = GameObject.Find("Main Camera");
+		date = GameObject.Find("Date & Time");
 		iniScale = transform.localScale;
 		
 		//later, initialize t to be a certain number of seconds since 2020 perihelion - January 5, 2020 2:47AM EST
@@ -38,6 +39,10 @@ public class EarthBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		//Get current speed multiplier from Date & Time
+		DateTimeDisplay dateObj = date.GetComponent("DateTimeDisplay") as DateTimeDisplay;
+		speed = dateObj.speed;
+		
 		//Rotation about axis
 		transform.Rotate(Vector3.up,(float)(-rotPerSec * speed * Time.deltaTime));
 		
@@ -73,9 +78,12 @@ public class EarthBehavior : MonoBehaviour
 		camPos = camObj.GetPosition();
 		camDist = camPos - pos;
 		
-		if (camDist.magnitude > 10 && !camObj.earthView) {
+		if (!camObj.earthView) {
 			scaleFactor = camDist.magnitude / 10;
 			transform.localScale = scaleFactor * iniScale;
+		}
+		else {
+			transform.localScale = iniScale;
 		}
 		
 		t+= speed*Time.deltaTime;
@@ -83,6 +91,10 @@ public class EarthBehavior : MonoBehaviour
 	
 	public Vector3 GetPosition() {
 		return transform.position;
+	}
+	
+	public Transform GetTransform() {
+		return transform;
 	}
 	
 	public double NewtMethod(double E) {
