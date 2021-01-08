@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,20 +11,24 @@ public class CamBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		if (earthView) {
-			earth = GameObject.Find("Earth");
-			transform.eulerAngles = new Vector3(0,0,0);
-		}
+		earth = GameObject.Find("Earth");
+		rot = transform.eulerAngles;
     }
 
     // Update is called once per frame
     void Update()
     {
+		EarthBehavior earthObj = earth.GetComponent("EarthBehavior") as EarthBehavior;
+		
         if (earthView) {
-			EarthBehavior earthObj = earth.GetComponent("EarthBehavior") as EarthBehavior;
 			pos = earthObj.GetPosition();
 			pos.z -= .2f;
 			transform.position = pos;
+			transform.LookAt(earthObj.GetTransform());
+		}
+		else {
+			transform.position = new Vector3(0,3000,0);
+			transform.eulerAngles = rot;
 		}
     }
 	
