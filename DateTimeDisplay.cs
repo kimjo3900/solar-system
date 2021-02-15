@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,11 +7,11 @@ public class DateTimeDisplay : MonoBehaviour
 {
 	public double speed = 1;
 	private Text txt;
-	private double s;
+	private double s, t;
 	private bool isLeapYear;
 	private int year = 2020;
-	private int days;
-	private string month;
+	private int day, hour, min;
+	private string month, timeDisplay;
 	private List<string> months = new List<string>() {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	private List<int> maxDays = new List<int>() {31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
 	private List<int> maxDaysLeapYear = new List<int>() {31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366};
@@ -21,7 +21,8 @@ public class DateTimeDisplay : MonoBehaviour
     {
 		txt = GetComponent<Text>();
 		
-		//s represents number of seconds since Jan 1 of the current year
+		// s represents number of seconds since Jan 1 midnight of the current year. Initially, it coincides with 2020 perihelion - January 5, 2020 2:47AM EST
+		// Later, calculuate s based on the current date/time by subtracting DateTime(YYYY, 1, 1) from DateTime.Now
 		s = 355620;
     }
 
@@ -35,26 +36,30 @@ public class DateTimeDisplay : MonoBehaviour
 		else
 			isLeapYear = true;
 		
-		//days initially represents day # of the current year
-		days = (int)(s / 86400) + 1;
+		//day initially represents day # of the current year
+		day = (int)(s / 86400) + 1;
 		
-		//determine the month based on days and then determine the day # of the current month
+		//determine the month based on day and then determine the day # of the current month
 		for (int i=0; i<months.Count; i++) {
-			if (!isLeapYear && days <= maxDays[i]) {
+			if (!isLeapYear && day <= maxDays[i]) {
 				month = months[i];
 				if (i != 0)
-					days -= maxDays[i-1];
+					day -= maxDays[i-1];
 				break;
 			}
-			else if (isLeapYear && days <= maxDaysLeapYear[i]) {
+			else if (isLeapYear && day <= maxDaysLeapYear[i]) {
 				month = months[i];
 				if (i != 0)
-					days -= maxDaysLeapYear[i-1];
+					day -= maxDaysLeapYear[i-1];
 				break;
 			}
 		}
 		
-		//determine the time based on s. s % 86400 gives # seconds since midnight.
+		//determine the time based on s
+		t = s % 86400;
+		hour = (int)(t / 3600);
+		t = t % 3600;
+		min = (int)(t / 60);
 		
 		//increment the year if necessary and reset s back to 0
 		if (s >= 31622400 && isLeapYear) {
@@ -66,10 +71,16 @@ public class DateTimeDisplay : MonoBehaviour
 			year++;
 		}
 		
-		
-		
-		txt.text = month + " " + days.ToString() + ", " + year.ToString();
+		txt.text = FormatTime(hour) + ":" + FormatTime(min) + "\n" + month + " " + day.ToString() + ", " + year.ToString();
 		
 		s+= speed*Time.deltaTime;
     }
+	
+	//format the time to display as hh:mm
+	private string FormatTime(int value) {
+		if (value >= 10)
+			return value.ToString();
+		else
+			return "0" + value.ToString();
+	}
 }

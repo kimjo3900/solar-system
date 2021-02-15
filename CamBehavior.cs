@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +22,7 @@ public class CamBehavior : MonoBehaviour
 		
         if (earthView) {
 			pos = earthObj.GetPosition();
-			pos.z -= .2f;
+			pos.z -= .3f;
 			transform.position = pos;
 			transform.LookAt(earthObj.GetTransform());
 		}

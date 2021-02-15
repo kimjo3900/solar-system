@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class SunBehavior : MonoBehaviour
 {
-	private Vector3 pos, earthPos, camPos, earthDist, camDist, iniScale;
+	private Vector3 pos, camPos, camDist, iniScale;
 	private float scaleFactor;
-	private GameObject cam, earth;
+	private GameObject cam;
 	private List<Vector3> sunScales;
 	
     // Start is called before the first frame update
     void Start()
     {
-		earth = GameObject.Find("Earth");
         cam = GameObject.Find("Main Camera");
 		iniScale = transform.localScale;
 		
@@ -29,7 +28,6 @@ public class SunBehavior : MonoBehaviour
 		//Scale sun size if sun-cam distance is large
 		//Should try to avoid all these statements if cam position hasn't changed since last update
 		
-        EarthBehavior earthObj = earth.GetComponent("EarthBehavior") as EarthBehavior;
 		CamBehavior camObj = cam.GetComponent("CamBehavior") as CamBehavior;
 		pos = GetPosition();
 		camPos = camObj.GetPosition();
