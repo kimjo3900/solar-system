@@ -46,17 +46,15 @@ public class EarthBehavior : MonoBehaviour
 		E = t/tRev*2*Math.PI;
 		
 		for (int i=0; i<3; i++) {
-			E = NewtMethod(E);
+			E = NewtonsMethod(E);
 		}
 		
 		xPos = 1495.96329*Math.Cos(E) - 24.9825869;
 		zPos = 1495.75469*Math.Sqrt(1-(Math.Pow(1495.96329*Math.Cos(E), 2)/2237906.17));
-		if (t % tRev > tRev/2)
+		if (t % tRev > tRev/2 && t>0 || t % tRev > -tRev/2 && t<0)
 			zPos = -zPos;
 		
 		transform.position = new Vector3((float)xPos, 0, (float)zPos);
-		
-		//Debug.Log(-pos);
 		
 		//Illuminate earth surface that's facing the sun
 		sunDist = -transform.position; 	//sunDist is earth-to-sun vector
@@ -90,7 +88,8 @@ public class EarthBehavior : MonoBehaviour
 		return t;
 	}
 	
-	public double NewtMethod(double E) {
+	public double NewtonsMethod(double E) {
 		return E - (5022440.67*(E-.0167*Math.Sin(E))-t) / (5022440.67*(1-.0167*Math.Cos(E)));
 	}
+
 }
