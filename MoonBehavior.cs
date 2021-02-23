@@ -7,7 +7,7 @@ public class MoonBehavior : MonoBehaviour
 {
 	private double t, T, L_0, l, lp, D, F, r, dL, L, S, h, N, B, x, y, z;
 	private float scaleFactor;
-	private Vector3 sunDist, earthDist, earthPos, camPos, camDist, iniScale;
+	private Vector3 earthDist, earthPos, camPos, camDist, iniScale;
 	private Material mat;
 	private GameObject cam, earth;
 	private const double tIni = 0.200104704;	// Julian centuries since J2000 (Jan 1, 2000, 12:00 UTC)
@@ -26,24 +26,30 @@ public class MoonBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		CamBehavior camObj = cam.GetComponent("CamBehavior") as CamBehavior;
+		
 		// Get t from EarthBehavior
 		EarthBehavior earthObj = earth.GetComponent("EarthBehavior") as EarthBehavior;
 		t = earthObj.GetT();
 		
 		T = tIni + t/secPerYear;   
-		L_0 = frac(0.606433 + 1336.851344*T);	  		// Mean longitude
-		l = 2*Math.PI*frac(0.374897 + 1325.552410*T);   // Moon's mean anomaly
-		lp = 2*Math.PI*frac(0.993133 + 99.997361*T);   	// Sun's mean anomaly
-		D = 2*Math.PI*frac(0.827361 + 1236.853086*T);   	// Diff. long. Moon-Sun
-		F = 2*Math.PI*frac(0.259086 + 1342.227825*T);   // Argument of latitude 
+		L_0 = Frac(0.606433 + 1336.851344*T);	  		// Mean longitude
+		l = 2*Math.PI*Frac(0.374897 + 1325.552410*T);   // Moon's mean anomaly
+		lp = 2*Math.PI*Frac(0.993133 + 99.997361*T);   	// Sun's mean anomaly
+		D = 2*Math.PI*Frac(0.827361 + 1236.853086*T);   	// Diff. long. Moon-Sun
+		F = 2*Math.PI*Frac(0.259086 + 1342.227825*T);   // Argument of latitude 
 
 		// Compute Earth-Moon distance
 		r = 3.85 - 0.20905*Math.Cos(l) - 0.03699*Math.Cos(2*D-l) - 0.02956*Math.Cos(2*D) - 0.0057*Math.Cos(2*l) + 0.00246*Math.Cos(2*l-2*D) - 0.00205*Math.Cos(lp-2*D) - 0.00171*Math.Cos(l+2*D) - 0.00152*Math.Cos(l+lp-2*D);
 		
+		if (camObj.GetView() == 3) {
+			r *= 100;
+		}
+		
 		// Compute right ascension 
 		dL = 22640*Math.Sin(l) - 4586*Math.Sin(l-2*D) + 2370*Math.Sin(2*D) + 769*Math.Sin(2*l) - 668*Math.Sin(lp) - 412*Math.Sin(2*F) - 212*Math.Sin(2*l-2*D) - 206*Math.Sin(l+lp-2*D) + 192*Math.Sin(l+2*D)
 			 - 165*Math.Sin(lp-2*D) + 148*Math.Sin(l-lp) - 125*Math.Sin(D) - 110*Math.Sin(l+lp) - 55*Math.Sin(2*F-2*D);
-		L = 2*Math.PI*frac(L_0 + dL/1296000);
+		L = 2*Math.PI*Frac(L_0 + dL/1296000);
 
 		// Compute declination
 		S = F + (dL + 412*Math.Sin(2*F) + 541*Math.Sin(lp)) / arcs;
@@ -61,28 +67,39 @@ public class MoonBehavior : MonoBehaviour
 
 		transform.position = earthPos + earthDist;
 
-		Debug.Log("Earth-Moon vector: " + earthDist + " RA: " + L*180/Math.PI);
+		//Debug.Log("Earth-Moon vector: " + earthDist + " RA: " + L*180/Math.PI);
 		
-        //Illuminate moon surface that's facing the sun
-		sunDist = -transform.position; 	//sunDist is moon-to-sun vector
-		mat.SetVector("_LightDir", sunDist.normalized);
+        // Illuminate moon surface that's facing the sun
+		mat.SetVector("_LightDir", -transform.position.normalized);
 
-		//Scale earth size if earth-cam distance is large
-		CamBehavior camObj = cam.GetComponent("CamBehavior") as CamBehavior;
-		camPos = camObj.GetPosition();
-		camDist = camPos - transform.position;
-
-		if (!camObj.earthView) {
-			scaleFactor = camDist.magnitude / 10;
+		// Adjust scale based on view mode
+		if (camObj.GetView() == 3) {
+			scaleFactor = 1000;
 			transform.localScale = scaleFactor * iniScale;
 		}
-		else {
+		else if (camObj.GetView() == 0) {
+			scaleFactor = 10;
+			transform.localScale = scaleFactor * iniScale;
+		}
+		else if (camObj.GetView() == 1) {
 			transform.localScale = iniScale;
+		}
+		else {
+			scaleFactor = 78;
+			transform.localScale = scaleFactor * iniScale;
 		}
     }
 
 	// Return the fraction part of a number
-	public double frac(double x) {
+	public double Frac(double x) {
 		return x-Math.Floor(x);
+	}
+	
+	public Vector3 GetPosition() {
+		return transform.position;
+	}
+	
+	public Transform GetTransform() {
+		return transform;
 	}
 }

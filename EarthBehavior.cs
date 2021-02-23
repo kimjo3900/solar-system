@@ -10,7 +10,7 @@ public class EarthBehavior : MonoBehaviour
 	private Vector3 camPos, camDist, sunDist, iniScale, norm;
 	private Material mat;
 	private GameObject cam, date;
-	private const double tRev = 31556925.445; // number of seconds in a tropical year which is 365.24219265 days
+	private const double tRev = 31556925.445;	// number of seconds in a tropical year which is 365.24219265 days
 	private const double rotPerSec = .00417807; // number of degrees of rotation about Earth's axis per second - note that a sidereal day is the time it takes for the Earth to make one complete rotation about its axis
 												// w.r.t. fixed stars and is 23h 56m 4.09s, which is less than the length of one solar day
 	
@@ -60,13 +60,11 @@ public class EarthBehavior : MonoBehaviour
 		sunDist = -transform.position; 	//sunDist is earth-to-sun vector
 		mat.SetVector("_SunDir", sunDist.normalized);
 		
-		//Scale earth size if earth-cam distance is large
+		// Adjust scale based on view mode
 		CamBehavior camObj = cam.GetComponent("CamBehavior") as CamBehavior;
-		camPos = camObj.GetPosition();
-		camDist = camPos - transform.position;
 		
-		if (!camObj.earthView) {
-			scaleFactor = camDist.magnitude / 10;
+		if (camObj.GetView() == 3) {
+			scaleFactor = 1000;
 			transform.localScale = scaleFactor * iniScale;
 		}
 		else {

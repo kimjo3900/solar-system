@@ -4,18 +4,16 @@ using UnityEngine;
 
 public class SunBehavior : MonoBehaviour
 {
-	private Vector3 pos, camPos, camDist, iniScale;
+	private Vector3 iniScale;
 	private float scaleFactor;
 	private GameObject cam;
-	private List<Vector3> sunScales;
+	private List<Vector3> sunScales = new List<Vector3>();
 	
     // Start is called before the first frame update
     void Start()
     {
         cam = GameObject.Find("Main Camera");
 		iniScale = transform.localScale;
-		
-		sunScales = new List<Vector3>();
 		
 		foreach (Transform child in transform) {
 			sunScales.Add(child.localScale);
@@ -25,27 +23,40 @@ public class SunBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		//Scale sun size if sun-cam distance is large
-		//Should try to avoid all these statements if cam position hasn't changed since last update
-		
 		CamBehavior camObj = cam.GetComponent("CamBehavior") as CamBehavior;
-		pos = GetPosition();
-		camPos = camObj.GetPosition();
-		camDist = camPos - pos;
 		
-		if (camDist.magnitude > 283) {
-			scaleFactor = camDist.magnitude / 283;
+		// Adjust scale based on view mode
+		int i = 0;
+		
+		if (camObj.GetView() == 3) {
+			scaleFactor = 20;
 			transform.localScale = scaleFactor * iniScale;
-			
-			int i = 0;
 			foreach (Transform child in transform) {
 				child.localScale = scaleFactor * sunScales[i];
 				i++;
+			}
+		}
+		else if (camObj.GetView() == 0) {
+			scaleFactor = 10;
+			transform.localScale = scaleFactor * iniScale;
+			foreach (Transform child in transform) {
+				child.localScale = scaleFactor * sunScales[i];
+				i++;
+			}
+		}
+		else {
+			transform.localScale = iniScale;
+			foreach (Transform child in transform) {
+				child.localScale = sunScales[i];
 			}
 		}
     }
 	
 	public Vector3 GetPosition() {
 		return transform.position;
+	}
+
+	public Transform GetTransform() {
+		return transform;
 	}
 }
