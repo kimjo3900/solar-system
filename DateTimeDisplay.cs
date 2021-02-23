@@ -102,9 +102,9 @@ public class DateTimeDisplay : MonoBehaviour
 	// Set speed using a logarithmic scale
 	public void SetSpeed(float speed) {
 		if (this.speed > 0)
-			this.speed = Math.Pow(5.622241136, speed);
+			this.speed = Math.Pow(6.811342874, speed);
 		else
-			this.speed = -Math.Pow(5.622241136, speed);
+			this.speed = -Math.Pow(6.811342874, speed);
 	}
 
 	// Play/Pause the scene
