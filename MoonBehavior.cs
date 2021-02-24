@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class MoonBehavior : MonoBehaviour
 {
-	private double t, T, L_0, l, lp, D, F, r, dL, L, S, h, N, B, x, y, z;
+	private double speed, t, T, L_0, l, lp, D, F, r, dL, L, S, h, N, B, x, y, z;
 	private float scaleFactor;
 	private Vector3 earthDist, earthPos, camPos, camDist, iniScale;
 	private Material mat;
-	private GameObject cam, earth;
+	private GameObject cam, earth, date;
+	private const double rotPerSec = 0.00015250414366;	// number of degrees of rotation about Moon's axis per second
 	private const double tIni = 0.200104704;	// Julian centuries since J2000 (Jan 1, 2000, 12:00 UTC)
 	private const double secPerYear = 3155760000;
 	private const double arcs = 206264.806247; 	// Arcseconds per radian
@@ -20,13 +21,19 @@ public class MoonBehavior : MonoBehaviour
 		mat = GetComponent<Renderer>().material;
 		earth = GameObject.Find("Earth");
         cam = GameObject.Find("Main Camera");
+		date = GameObject.Find("Date & Time");
 		iniScale = transform.localScale;
     }
 
     // Update is called once per frame
     void Update()
     {
-		CamBehavior camObj = cam.GetComponent("CamBehavior") as CamBehavior;
+		//Get current speed multiplier from Date & Time
+		DateTimeDisplay dateObj = date.GetComponent("DateTimeDisplay") as DateTimeDisplay;
+		speed = dateObj.speed;
+		
+		//Rotation about axis
+		transform.Rotate(Vector3.up, (float)(-rotPerSec * speed * Time.deltaTime));
 		
 		// Get t from EarthBehavior
 		EarthBehavior earthObj = earth.GetComponent("EarthBehavior") as EarthBehavior;
@@ -42,6 +49,9 @@ public class MoonBehavior : MonoBehaviour
 		// Compute Earth-Moon distance
 		r = 3.85 - 0.20905*Math.Cos(l) - 0.03699*Math.Cos(2*D-l) - 0.02956*Math.Cos(2*D) - 0.0057*Math.Cos(2*l) + 0.00246*Math.Cos(2*l-2*D) - 0.00205*Math.Cos(lp-2*D) - 0.00171*Math.Cos(l+2*D) - 0.00152*Math.Cos(l+lp-2*D);
 		
+		CamBehavior camObj = cam.GetComponent("CamBehavior") as CamBehavior;
+		
+		// Greatly exaggerate Earth-Moon distance in top-down view
 		if (camObj.GetView() == 3) {
 			r *= 100;
 		}
@@ -70,7 +80,7 @@ public class MoonBehavior : MonoBehaviour
 		//Debug.Log("Earth-Moon vector: " + earthDist + " RA: " + L*180/Math.PI);
 		
         // Illuminate moon surface that's facing the sun
-		mat.SetVector("_LightDir", -transform.position.normalized);
+		mat.SetVector("_LightDir", -transform.position.normalized / 2);
 
 		// Adjust scale based on view mode
 		if (camObj.GetView() == 3) {
