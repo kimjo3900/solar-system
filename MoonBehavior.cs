@@ -11,9 +11,9 @@ public class MoonBehavior : MonoBehaviour
 	private Material mat;
 	private GameObject cam, earth, date;
 	private const double rotPerSec = 0.00015250414366;	// number of degrees of rotation about Moon's axis per second
-	private const double tIni = 0.200104704;	// Julian centuries since J2000 (Jan 1, 2000, 12:00 UTC)
-	private const double secPerYear = 3155760000;
-	private const double arcs = 206264.806247; 	// Arcseconds per radian
+	private const double tIni = 0.200104704;			// Julian centuries since J2000 (Jan 1, 2000, 12:00 UTC)
+	private const double secPerCent = 3155760000;		// number of seconds in Julian century
+	private const double arcs = 206264.806247; 			// Arcseconds per radian
 	
     // Start is called before the first frame update
     void Start()
@@ -23,6 +23,11 @@ public class MoonBehavior : MonoBehaviour
         cam = GameObject.Find("Main Camera");
 		date = GameObject.Find("Date & Time");
 		iniScale = transform.localScale;
+		
+		//initialize Moon's rotation for t=0
+		EarthBehavior earthObj = earth.GetComponent("EarthBehavior") as EarthBehavior;
+		t = earthObj.GetT();
+		transform.Rotate(Vector3.up, -(float)(rotPerSec * t));
     }
 
     // Update is called once per frame
@@ -39,19 +44,19 @@ public class MoonBehavior : MonoBehaviour
 		EarthBehavior earthObj = earth.GetComponent("EarthBehavior") as EarthBehavior;
 		t = earthObj.GetT();
 		
-		T = tIni + t/secPerYear;   
-		L_0 = Frac(0.606433 + 1336.851344*T);	  		// Mean longitude
-		l = 2*Math.PI*Frac(0.374897 + 1325.552410*T);   // Moon's mean anomaly
-		lp = 2*Math.PI*Frac(0.993133 + 99.997361*T);   	// Sun's mean anomaly
+		T = tIni + t/secPerCent;   
+		L_0 = Frac(0.606433 + 1336.851344*T);	  			// Mean longitude
+		l = 2*Math.PI*Frac(0.374897 + 1325.552410*T);   	// Moon's mean anomaly
+		lp = 2*Math.PI*Frac(0.993133 + 99.997361*T);   		// Sun's mean anomaly
 		D = 2*Math.PI*Frac(0.827361 + 1236.853086*T);   	// Diff. long. Moon-Sun
-		F = 2*Math.PI*Frac(0.259086 + 1342.227825*T);   // Argument of latitude 
+		F = 2*Math.PI*Frac(0.259086 + 1342.227825*T);   	// Argument of latitude 
 
 		// Compute Earth-Moon distance
 		r = 3.85 - 0.20905*Math.Cos(l) - 0.03699*Math.Cos(2*D-l) - 0.02956*Math.Cos(2*D) - 0.0057*Math.Cos(2*l) + 0.00246*Math.Cos(2*l-2*D) - 0.00205*Math.Cos(lp-2*D) - 0.00171*Math.Cos(l+2*D) - 0.00152*Math.Cos(l+lp-2*D);
 		
 		CamBehavior camObj = cam.GetComponent("CamBehavior") as CamBehavior;
 		
-		// Greatly exaggerate Earth-Moon distance in top-down view
+		// Greatly exaggerate Earth-Moon distance if in top-down view
 		if (camObj.GetView() == 3) {
 			r *= 100;
 		}
@@ -76,8 +81,6 @@ public class MoonBehavior : MonoBehaviour
 		earthPos = earthObj.GetPosition();
 
 		transform.position = earthPos + earthDist;
-
-		//Debug.Log("Earth-Moon vector: " + earthDist + " RA: " + L*180/Math.PI);
 		
         // Illuminate moon surface that's facing the sun
 		mat.SetVector("_LightDir", -transform.position.normalized / 2);

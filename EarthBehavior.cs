@@ -11,8 +11,9 @@ public class EarthBehavior : MonoBehaviour
 	private Material mat;
 	private GameObject cam, date;
 	private const double tRev = 31556925.445;	// number of seconds in a tropical year which is 365.24219265 days
-	private const double rotPerSec = .00417807; // number of degrees of rotation about Earth's axis per second - note that a sidereal day is the time it takes for the Earth to make one complete rotation about its axis
-												// w.r.t. fixed stars and is 23h 56m 4.09s, which is less than the length of one solar day
+	private const double rotPerSec = .00417807; // number of degrees of rotation about Earth's axis per second; rotates 360 degrees in one sidereal day which is slightly less than a solar day
+	private DateTime dtNow, dtPeri;
+	private TimeSpan tSincePeri;
 	
     // Start is called before the first frame update
     void Start()
@@ -22,14 +23,15 @@ public class EarthBehavior : MonoBehaviour
 		date = GameObject.Find("Date & Time");
 		iniScale = transform.localScale;
 		
-		// t is the number of seconds since Jan 5, 2020 2:47AM EST perihelion
-		// Later, calculuate t based on the current date/time by subtracting DateTime(2020, 1, 5, 2, 47, 0) from DateTime.Now
-		t = 0;
+		// Compute t - the number of seconds since Jan 5, 2020 5:47 UTC (2020 perihelion)
+		dtNow = DateTime.UtcNow;
+		dtPeri = new DateTime(2020, 1, 5, 7, 47, 0);
+		tSincePeri = dtNow.Subtract(dtPeri);
+
+		t = tSincePeri.TotalSeconds;
 		
 		//initialize Earth's rotation for t=0
-		//Transform.forward points out from Dhaka, Bangladesh which is 11 hours ahead of EST
-		//perihelion oocurs on Jan 5, 2020 1:47PM BST
-		transform.Rotate(Vector3.up, -116.75f);
+		transform.Rotate(Vector3.up, -116.75f - (float)(rotPerSec * t));
     }
 
     // Update is called once per frame

@@ -10,21 +10,27 @@ public class DateTimeDisplay : MonoBehaviour
 	private Text txt;
 	private double s, t;
 	private bool isPaused = false;
-	private int year = 2020;
+	private int year;
 	private int day, hour, min;
 	private string month, timeDisplay;
 	private List<string> months = new List<string>() {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	private List<int> maxDays = new List<int>() {31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
 	private List<int> maxDaysLeapYear = new List<int>() {31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366};
+	private DateTime dtNow, dtStart;
+	private TimeSpan tSinceStart;
 	
     // Start is called before the first frame update
     void Start()
     {
 		txt = GetComponent<Text>();
 		
-		// s represents number of seconds since Jan 1 midnight of the current year. Initially, it coincides with 2020 perihelion - January 5, 2020 2:47AM EST
-		// Later, calculuate s based on the current date/time by subtracting DateTime(YYYY, 1, 1) from DateTime.Now
-		s = 355620;
+		// Compute s - the number of seconds since Jan 1 midnight of the current year
+		dtNow = DateTime.UtcNow;
+		year = dtNow.Year;
+		dtStart = new DateTime(year, 1, 1);
+		tSinceStart = dtNow.Subtract(dtStart);
+
+		s = tSinceStart.TotalSeconds;
     }
 
     // Update is called once per frame
@@ -80,7 +86,6 @@ public class DateTimeDisplay : MonoBehaviour
 		
 		s+= speed*Time.deltaTime;
 
-		//Debug.Log(speed.ToString());
     }
 
 	//determine if it's a leap year based on year number
