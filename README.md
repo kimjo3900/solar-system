@@ -1,5 +1,5 @@
 # solar-system
-Unity3D simulation of Earth-Sun-Moon (and hopefully more!)
+Unity3D simulation of Earth-Sun-Moon
 
 ## Features
 - Tracks the positions and rotations of the Earth and the Moon for any given date/time
