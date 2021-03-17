@@ -9,6 +9,7 @@ Unity3D simulation of Earth-Sun-Moon
   - **Earth view** points towards the Earth from a point on the sky along the vernal equinox
   - **Moon view** provides a zoomed in view of the Moon from Earth's surface
   - **Top-down** view (default view) points down on the ecliptic plane from a point above the Sun
+    - Scales of all bodies are extremely exaggerated to allow all bodies to be seen
 - Playback options:
   - Play/Pause
   - Reverse
