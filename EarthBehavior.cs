@@ -5,15 +5,14 @@ using UnityEngine;
 
 public class EarthBehavior : MonoBehaviour
 {
-	private double speed, xPos, zPos, t, E;
+	private double speed, xPos, zPos, t, dT, E;
 	private float scaleFactor;
 	private Vector3 camPos, camDist, sunDist, iniScale, norm;
 	private Material mat;
 	private GameObject cam, date;
 	private const double tRev = 31556925.445;	// number of seconds in a tropical year which is 365.24219265 days
 	private const double rotPerSec = .00417807; // number of degrees of rotation about Earth's axis per second; rotates 360 degrees in one sidereal day which is slightly less than a solar day
-	private DateTime dtNow, dtPeri;
-	private TimeSpan tSincePeri;
+	private DateTime dtPeri = new DateTime(2020, 1, 5, 7, 47, 0);	// DateTime of Jan 2020 perihelion - Jan 5, 2020 07:47 UTC
 	
     // Start is called before the first frame update
     void Start()
@@ -23,14 +22,10 @@ public class EarthBehavior : MonoBehaviour
 		date = GameObject.Find("Date & Time");
 		iniScale = transform.localScale;
 		
-		// Compute t - the number of seconds since Jan 5, 2020 5:47 UTC (2020 perihelion)
-		dtNow = DateTime.UtcNow;
-		dtPeri = new DateTime(2020, 1, 5, 7, 47, 0);
-		tSincePeri = dtNow.Subtract(dtPeri);
-
-		t = tSincePeri.TotalSeconds;
+		// Initialize t - the number of seconds since Jan 2020 perihelion
+		SetT(DateTime.UtcNow);
 		
-		//initialize Earth's rotation for t=0
+		//initialize Earth's rotation
 		transform.Rotate(Vector3.up, -116.75f - (float)(rotPerSec * t));
     }
 
@@ -76,18 +71,39 @@ public class EarthBehavior : MonoBehaviour
 		t+= speed*Time.deltaTime;
     }
 	
+	// Get the Earth's position
 	public Vector3 GetPosition() {
 		return transform.position;
 	}
 	
+	// Get the object's transform
 	public Transform GetTransform() {
 		return transform;
 	}
 	
+	// Get t
 	public double GetT() {
 		return t;
 	}
 	
+	// Set t based on the given DateTime
+	public void SetT(DateTime dt) {
+		dT = t;
+		t = dt.Subtract(dtPeri).TotalSeconds;
+		dT = t - dT;
+	}
+	
+	// Set the Earth's rotation - only to be called when changing the date through the Date Selection menu
+	public void SetRot(double t) {
+		transform.Rotate(Vector3.up, (float)(-rotPerSec * t));
+	}
+	
+	// Get dT - the difference in seconds between the new time and previous time
+	public double GetDT() {
+		return dT;
+	}
+	
+	// Method for accurately computing the Earth's position as a function of t
 	public double NewtonsMethod(double E) {
 		return E - (5022440.67*(E-.0167*Math.Sin(E))-t) / (5022440.67*(1-.0167*Math.Cos(E)));
 	}

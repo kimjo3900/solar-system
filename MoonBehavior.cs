@@ -24,7 +24,7 @@ public class MoonBehavior : MonoBehaviour
 		date = GameObject.Find("Date & Time");
 		iniScale = transform.localScale;
 		
-		//initialize Moon's rotation for t=0
+		// Initialize Moon's rotation
 		EarthBehavior earthObj = earth.GetComponent("EarthBehavior") as EarthBehavior;
 		t = earthObj.GetT();
 		transform.Rotate(Vector3.up, -(float)(rotPerSec * t));
@@ -33,11 +33,11 @@ public class MoonBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		//Get current speed multiplier from Date & Time
+		// Get current speed multiplier from Date & Time
 		DateTimeDisplay dateObj = date.GetComponent("DateTimeDisplay") as DateTimeDisplay;
 		speed = dateObj.speed;
 		
-		//Rotation about axis
+		// Rotation about axis
 		transform.Rotate(Vector3.up, (float)(-rotPerSec * speed * Time.deltaTime));
 		
 		// Get t from EarthBehavior
@@ -108,11 +108,18 @@ public class MoonBehavior : MonoBehaviour
 		return x-Math.Floor(x);
 	}
 	
+	// Get the Moon's position
 	public Vector3 GetPosition() {
 		return transform.position;
 	}
 	
+	// Get the object's transform
 	public Transform GetTransform() {
 		return transform;
+	}
+	
+	// Set the Moon's rotation
+	public void SetRot(double t) {
+		transform.Rotate(Vector3.up, -(float)(rotPerSec * t));
 	}
 }
