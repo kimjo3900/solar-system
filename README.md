@@ -14,6 +14,6 @@ Unity3D simulation of Earth-Sun-Moon
   - Play/Pause
   - Reverse
   - Speed control slider
-    - Logarithmic scale to allow speed to be adjusted between 1x speed (real-time) and 31,500,000x speed (1 year/sec)
+    - Logarithmic scale to allow speed to be adjusted between x1 speed (real-time) and x31,500,000 speed (1 year/sec)
   - Date Selection Menu
     - Can set any date/time between 2000 and 2100
