@@ -6,7 +6,7 @@ public class CamBehavior : MonoBehaviour
 {
 	private Vector3 rot;
 	private GameObject earth, sun, moon;
-	private int view = 3;	//Set initial view to top-down view
+	private int view = 3;	// Set initial view to top-down view
 	
     // Start is called before the first frame update
     void Start()
@@ -51,14 +51,17 @@ public class CamBehavior : MonoBehaviour
 		}
 	}
 	
+	// Get the camera's position
 	public Vector3 GetPosition() {
 		return transform.position;
 	}
 
+	// Set the view mode
 	public void SetView(int view) {
 		this.view = view;
 	}
 	
+	// Get the current view mode
 	public int GetView() {
 		return view;
 	}

@@ -52,10 +52,12 @@ public class SunBehavior : MonoBehaviour
 		}
     }
 	
+	// Get the Sun's position - (0,0,0)
 	public Vector3 GetPosition() {
 		return transform.position;
 	}
 
+	// Get the object's transform
 	public Transform GetTransform() {
 		return transform;
 	}
