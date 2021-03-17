@@ -6,7 +6,7 @@ Unity3D simulation of Earth-Sun-Moon
 - Offers a variety of view modes for the camera to point towards:
   - **Sun view** points towards the Sun from a point on Earth's surface directly underneath the Sun
     - In this view the Sun and the Moon are accurately scaled with respect to one another which allows for solar eclipse tracking
-  - **Earth view** points towards the Earth from a point on the sky along the vernal equinox
+  - **Earth view** points towards the Earth from a point in the sky along the vernal equinox
   - **Moon view** provides a zoomed in view of the Moon from a point on Earth's surface directly underneath the Moon
   - **Top-down** view (default view) points down on the ecliptic plane from a point above the Sun
     - Scales of all bodies are extremely exaggerated to allow all bodies to be seen
