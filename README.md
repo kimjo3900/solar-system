@@ -9,4 +9,10 @@ Unity3D simulation of Earth-Sun-Moon (and hopefully more!)
   - Earth view points towards the Earth from a point on the sky along the vernal equinox
   - Moon view provides a zoomed in view of the Moon from Earth's surface
   - Top-down view (default view) points down on the ecliptic plane from a point above the Sun
-
+- Playback options:
+  - Play/Pause
+  - Reverse
+  - Speed control slider
+    - Logarithmic scale to allow speed to be adjusted between 1x speed (real-time) and 30,000,000x speed (1 year/sec)
+  - Date Selection Menu
+    - Can set any date/time between 2000 and 2100
