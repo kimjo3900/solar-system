@@ -19,4 +19,4 @@ Unity3D simulation of Earth-Sun-Moon
     - Can set any date/time between 2000 and 2100
 
 ## Demo
-![](solar-system preview.gif)
+![](solar-system-demo.gif)
