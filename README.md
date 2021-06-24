@@ -1,11 +1,11 @@
 # solar-system
 Unity3D simulation of Earth-Sun-Moon
 
+## Play it Here
+https://rb.gy/lic2mb
+
 ## Demo
 ![](solar-system-demo.gif)
-
-## Play it here
-https://rb.gy/lic2mb
 
 ## Features
 - Tracks the positions and rotations of the Earth and the Moon for any given date and time (in UTC)
