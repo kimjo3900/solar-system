@@ -1,8 +1,7 @@
 # solar-system
 Unity3D simulation of Earth-Sun-Moon
 
-## Play it Here
-https://rb.gy/kos0vq
+## Play it [here](https://rb.gy/kos0vq)
 
 ## Demo
 ![](solar-system-demo.gif)
