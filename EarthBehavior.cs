@@ -25,35 +25,36 @@ public class EarthBehavior : MonoBehaviour
 		// Initialize t - the number of seconds since Jan 2020 perihelion
 		SetT(DateTime.UtcNow);
 		
-		//initialize Earth's rotation
+		// Initialize Earth's rotation
 		transform.Rotate(Vector3.up, -116.75f - (float)(rotPerSec * t));
     }
 
     // Update is called once per frame
     void Update()
     {
-		//Get current speed multiplier from Date & Time
+		// Get current speed multiplier from Date & Time
 		DateTimeDisplay dateObj = date.GetComponent("DateTimeDisplay") as DateTimeDisplay;
 		speed = dateObj.speed;
 		
-		//Rotation about axis
+		// Rotate Earth about axis
 		transform.Rotate(Vector3.up, (float)(-rotPerSec * speed * Time.deltaTime));
 		
-		//Orbit
+		// Compute Earth's position as function of t
+		// E initially approximates the number of radians Earth has orbited since the perihelion
 		E = t/tRev*2*Math.PI;
 		
-		for (int i=0; i<3; i++) {
-			E = NewtonsMethod(E);
-		}
+		// Iterate through Newton's Method 3 times to get progressively more precise values for E
+		E = NewtonsMethod(E, 3);
 		
 		xPos = 1495.96329*Math.Cos(E) - 24.9825869;
 		zPos = 1495.75469*Math.Sqrt(1-(Math.Pow(1495.96329*Math.Cos(E), 2)/2237906.17));
+		
 		if (t % tRev > tRev/2 && t>0 || t % tRev > -tRev/2 && t<0)
 			zPos = -zPos;
 		
 		transform.position = new Vector3((float)xPos, 0, (float)zPos);
 		
-		//Illuminate earth surface that's facing the sun
+		// Illuminate earth surface that's facing the sun
 		sunDist = -transform.position; 	//sunDist is earth-to-sun vector
 		mat.SetVector("_SunDir", sunDist.normalized);
 		
@@ -68,7 +69,7 @@ public class EarthBehavior : MonoBehaviour
 			transform.localScale = iniScale;
 		}
 		
-		t+= speed*Time.deltaTime;
+		t += speed*Time.deltaTime;
     }
 	
 	// Get the Earth's position
@@ -103,9 +104,14 @@ public class EarthBehavior : MonoBehaviour
 		return dT;
 	}
 	
-	// Method for accurately computing the Earth's position as a function of t
-	public double NewtonsMethod(double E) {
-		return E - (5022440.67*(E-.0167*Math.Sin(E))-t) / (5022440.67*(1-.0167*Math.Cos(E)));
+	// Recursive method for approximating the Earth's position as a function of t
+	public double NewtonsMethod(double E, int n) {
+		// Base case when n is 0
+		if (n < 1)
+			return E;
+		// Recursive case
+		else
+			return NewtonsMethod(E - (5022440.67*(E-.0167*Math.Sin(E))-t) / (5022440.67*(1-.0167*Math.Cos(E))), n-1);
 	}
 
 }
